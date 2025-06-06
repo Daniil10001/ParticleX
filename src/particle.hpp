@@ -140,7 +140,7 @@ class Quad
     {
         decltype(typeB()/typeA()) x1,x2;
         //decltype(a.value) _a=a.value,_b=b.value,_c=c.value;
-        if (b*b-Coefficient(4)*a*c<0) return Vector<2, decltype(typeB()/typeA())>({-1,-1});
+        if (b*b-Coefficient(4)*a*c<0 || a==0) return Vector<2, decltype(typeB()/typeA())>({-1,-1});
         x1=(-b-(b*b-Coefficient(4)*a*c).sqrt())/(Coefficient(2)*a);
         x2=(-b+(b*b-Coefficient(4)*a*c).sqrt())/(Coefficient(2)*a);
         return Vector<2, decltype(typeB()/typeA())>({x1,x2});
@@ -152,7 +152,6 @@ Time FindIntersection(Particle<dim>& p1, Particle<dim>& p2)
 {
     Quad<Velocity, Length> q(p1.velocity-p2.velocity,p1.cord-p2.cord);
     q.c-=(p1.radius+p2.radius)*(p1.radius+p2.radius);
-    if (q.a==0) return std::numeric_limits<decltype(q.c.value)>::max();
     Vector<2,Time> t_inter=q.findInter();
     std::cout<<"\n"<<q.a<<" "<<q.b<<" "<<q.c<<"\n";
     std::cout<<t_inter<<' ';
