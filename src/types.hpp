@@ -38,6 +38,17 @@ public:
         return DimQ<L - L1, M - M1, t - t1, T - T1, mu-mu1>(this->value / q2.value);
     }
 
+
+    DimQ<L/2,M/2,t/2,T/2,mu/2> sqrt()
+    {
+        static_assert(L%2==0);
+        static_assert(M%2==0);
+        static_assert(t%2==0);
+        static_assert(T%2==0);
+        static_assert(mu%2==0);
+        return sqrtl(this->value);
+    }
+
     // Шаблонный оператор вычитания
     DimQ operator-(const DimQ &q2) const
     {

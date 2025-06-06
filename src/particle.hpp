@@ -139,10 +139,10 @@ class Quad
     Vector<2, decltype(typeB()/typeA())> findInter()
     {
         decltype(typeB()/typeA()) x1,x2;
-        decltype(a.value) _a=a.value,_b=b.value,_c=c.value;
-        if (_b*_b-4*_a*_c<0) return Vector<2, decltype(typeB()/typeA())>({-1,-1});
-        x1=(-_b-sqrtl(_b*_b-4*_a*_c))/(2*_a);
-        x2=(-_b+sqrtl(_b*_b-4*_a*_c))/(2*_a);
+        //decltype(a.value) _a=a.value,_b=b.value,_c=c.value;
+        if (b*b-Coefficient(4)*a*c<0) return Vector<2, decltype(typeB()/typeA())>({-1,-1});
+        x1=(-b-(b*b-Coefficient(4)*a*c).sqrt())/(Coefficient(2)*a);
+        x2=(-b+(b*b-Coefficient(4)*a*c).sqrt())/(Coefficient(2)*a);
         return Vector<2, decltype(typeB()/typeA())>({x1,x2});
     }
 };
