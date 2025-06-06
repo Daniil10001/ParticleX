@@ -16,7 +16,7 @@ public:
     // Шаблонный оператор изменения знака
     DimQ operator-() const
     {
-        return DimQ(-this.value);
+        return DimQ(-this->value);
     }
 
     // Шаблонный оператор сложения
@@ -113,12 +113,12 @@ std::ostream& operator<<(std::ostream& os, const DimQ<L,M,t,T,mu>& obj)
 }
 
 // Псевдонимы типов
+typedef DimQ<0, 0, 0, 0, 0> Coefficient;
 typedef DimQ<1, 0, 0, 0, 0> Length;
 typedef DimQ<0, 1, 0, 0, 0> Mass;
 typedef DimQ<0, 0, 1, 0, 0> Time;
 typedef DimQ<0, 0, 0, 1, 0> Temperature;
-typedef DimQ<0, 0, 0, 0, 0> Coefficient;
-typedef DimQ<0, 0, 0, 0, 1> Molar;
+typedef DimQ<0, 0, 0, 0, 1> Mol;
 
 typedef DimQ<3, 0, 0, 0, 0> Volume;
 typedef DimQ<2, 0, 0, 0, 0> Area;
@@ -130,7 +130,7 @@ typedef decltype(Acceleration() * Mass()) Force;
 typedef decltype(Force()/Area()) Pressure;
 typedef decltype(Force() * Length()) Energy;
 typedef decltype(Energy() / Time()) Power;
-typedef decltype(Mass()/Molar()) MolarMass;
+typedef decltype(Mass()/Mol()) MolarMass;
 
 // Константы
 static const DimQ<0,0,0,0,-1> Na(6.02e23l);
