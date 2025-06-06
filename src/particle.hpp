@@ -107,6 +107,8 @@ class Particle
     Vector<dim, Velocity> velocity;
     Vector<dim, Lenght> cord;
     Mass m;
+
+    
 };
 
 #endif
