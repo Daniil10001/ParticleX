@@ -1,107 +1,7 @@
 #ifndef particle_hpp__
 #define particle_hpp__
 
-#include "standarts.hpp"
-#include "types.hpp"
-#include<array>
-#include <cassert>
-#include <type_traits>
-
-template<u dim, typename type>
-class Vector
-{
-    static_assert(is_DimQ_v<type>);
-    public:
-    std::array<type,dim> v;
-
-    Vector(const std::initializer_list<type>& l)
-    {
-        assert(l.size()==dim);
-        #pragma GCC ivdep
-        for (unsigned int i=0;i<dim;i++)
-            this->v[i]=*(l.begin()+i);
-    }
-    Vector(const Vector &V):v(V.v){}
-    Vector(){v.fill(0);}
-
-    type& operator[](std::size_t at) {return this->v[at];}
-    const type& operator[](std::size_t at) const {return this->v[at];}
-
-    decltype(type()*type()) operator*(const Vector&v2)
-    {
-        decltype(type()*type()) sp=0;
-        #pragma GCC ivdep
-        for (unsigned int i=0;i<dim;i++)
-            sp+=this->v[i]*v2[i];
-        return sp;
-    }
-
-    template<typename type2>
-    Vector<dim, decltype(type()*type2())> operator*(const type2&q2)
-    {
-        Vector<dim, decltype(type()*type2())> v3;
-        for (unsigned int i=0;i<dim;i++)
-            v3[i]=this->v[i]*q2;
-        return v3;
-    }
-
-    template<typename type2>
-    Vector<dim, decltype(type()/type2())> operator/(const type2&q2)
-    {
-        Vector<dim, decltype(type()/type2())> v3;
-        for (unsigned int i=0;i<dim;i++)
-            v3[i]=this->v[i]/q2;
-        return v3;
-    }
-
-    Vector operator+(const Vector &v2) const
-    {
-        Vector v3;
-        #pragma GCC ivdep
-        for (unsigned int i=0;i<dim;i++)
-            v3[i]=this->v[i]+v2[i];
-        return v3;
-    }
-
-    Vector& operator+=(const Vector &v2)
-    {
-        #pragma GCC ivdep
-        for (unsigned int i=0;i<dim;i++)
-            this->v[i]+=v2[i];
-        return *this;
-    }
-
-    Vector operator-(const Vector &v2) const
-    {
-        Vector v3;
-        #pragma GCC ivdep
-        for (unsigned int i=0;i<dim;i++)
-            v3[i]=this->v[i]-v2[i];
-        return v3;
-    }
-
-    Vector& operator-=(const Vector &v2)
-    {
-        #pragma GCC ivdep
-        for (unsigned int i=0;i<dim;i++)
-            this->v[i]-=v2[i];
-        return *this;
-    }
-};
-
-#include<ostream>
-template <u dim, typename type>
-std::ostream& operator<<(std::ostream& os, const Vector<dim, type>& obj)
-{
-    os<<"<";
-    for (unsigned int i=0;i<dim;i++)
-        os<<obj.v[i].value<<(i!=dim-1?",":"");
-    os<<">";
-    return print_Dim(os,type());
-}
-
-
-
+#include "vector.hpp"
 
 template<u dim>
 class Particle
@@ -157,6 +57,24 @@ Time FindIntersection(Particle<dim>& p1, Particle<dim>& p2)
     std::cout<<t_inter<<' ';
     if (t_inter.v[0]<0) return std::numeric_limits<decltype(q.c.value)>::max();
     return t_inter.v[0];
+}
+
+template<u dim, typename t1, typename t2>
+Vector<dim,t2> projection(Vector<dim,t1> a, Vector<dim, t2> v)
+{
+    return ((a*v)/(v*v))*v;
+}
+
+template<u dim>
+void DoBounce(Particle<dim>& p1, Particle<dim>& p2)
+{
+    Vector<dim,Length> a=p1.cord-p2.cord;
+    if ((a*a).sqrt()>(p1.radius+p2.radius)) return;
+    Vector<dim, Momentum> pr1=projection(a,p1.velocity),pr2=projection(a,p2.velocity);
+    auto v1n=(2*p1.m*pr1-pr2*(p1.m-p2.m))/(p1.m+p2.m);
+    auto v2n=(2*p2.m*pr2+pr1*(p1.m-p2.m))/(p1.m+p2.m);
+    p1.velocity=p1.velocity-pr1+v1n;
+    p2.velocity=p2.velocity-pr2+v2n;
 }
 
 #endif

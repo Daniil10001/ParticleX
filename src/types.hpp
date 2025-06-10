@@ -8,9 +8,9 @@ class DimQ
 {
 public:
     long double value;
-    static constexpr const long double epsilon = 1e-6l;
+    static constexpr const long double epsilon = 1e-9l;
 
-    DimQ(double _value) : value(_value) {}
+    DimQ(long double _value) : value(_value) {}
     DimQ() : DimQ(0) {}
 
     // Шаблонный оператор изменения знака
@@ -90,7 +90,8 @@ public:
 
     bool operator==(const DimQ&q2) const
     {
-        return std::abs(this->value - q2.value) < epsilon;
+        return std::abs(this->value - q2.value)/
+            (std::abs(this->value)+std::abs(q2.value)+epsilon) < epsilon;
     }
 
     bool operator!=(const DimQ&q2) const
@@ -142,9 +143,10 @@ typedef decltype(Force()/Area()) Pressure;
 typedef decltype(Force() * Length()) Energy;
 typedef decltype(Energy() / Time()) Power;
 typedef decltype(Mass()/Mol()) MolarMass;
+typedef decltype(Velocity()*Mass()) Momentum;
 
 // Константы
-static const DimQ<0,0,0,0,-1> Na(6.02e23l);
+static const DimQ<0,0,0,0,-1> Na(6.02e23L);
 static const decltype(Energy()/Temperature()) k(1.38e-23l);
 static const auto R=Na*k;
 

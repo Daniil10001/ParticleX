@@ -2,10 +2,11 @@
 #define solver_hpp__
 
 #include"standarts.hpp"
-#include<map>
+#include"particle.hpp"
+#include<vector>
+#include<array>
 
 
-template<ll size>
 class Solver
 {
 private:
@@ -14,8 +15,12 @@ public:
     
 };
 
+template<u dim>
 class Domain
 {
+    public:
+    std::vector<Particle<dim>> pcs;
+    std::array<const std::vector<Particle<dim>> const *,3> dpsort;
 
 };
 
