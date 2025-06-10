@@ -33,7 +33,7 @@ class Vector
         return *this;
     }
 
-    decltype(type()*type()) operator*(const Vector&v2)
+    decltype(type()*type()) operator*(const Vector&v2) const
     {
         decltype(type()*type()) sp=0;
         #pragma GCC ivdep
@@ -43,7 +43,7 @@ class Vector
     }
 
     template<typename type2>
-    Vector<dim, decltype(type()*type2())> operator*(const type2&q2)
+    Vector<dim, decltype(type()*type2())> operator*(const type2&q2) const
     {
         Vector<dim, decltype(type()*type2())> v3;
         for (unsigned int i=0;i<dim;i++)
@@ -52,7 +52,7 @@ class Vector
     }
 
     template<typename type2>
-    Vector<dim, decltype(type()/type2())> operator/(const type2&q2)
+    Vector<dim, decltype(type()/type2())> operator/(const type2&q2) const
     {
         Vector<dim, decltype(type()/type2())> v3;
         for (unsigned int i=0;i<dim;i++)

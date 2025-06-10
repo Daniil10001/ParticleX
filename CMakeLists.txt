@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project( Factorio  LANGUAGES CXX)
-
-if (NOT DLEVEL)
-    set(DLEVEL 10)
-endif()
-
+project(ParticleX  LANGUAGES CXX)
 set(BUILD_SHARED_LIBS FALSE)
 
 # SFML
@@ -21,8 +16,7 @@ set(BUILD_SHARED_LIBS FALSE)
 # Set standarts
 # ----------------------------------------------
 set(CMAKE_CXX_STANDARD 17)
-add_compile_options(-Wall -Wextra -Wpedantic -g -DDLEVEL=${DLEVEL})
+add_compile_options(-Wall -Wextra -Wpedantic -O2)
 include_directories(./include)
-
 
 include(./src/CMakeLists.txt)

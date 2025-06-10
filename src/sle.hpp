@@ -21,7 +21,7 @@ class SLE
     Vector<dim,Coefficient> b;
 
     template<typename t1, typename t2>
-    SLE(std::array<Vector<dim,t1>, dim-1>& base, Vector<dim,t1>& pose_border, Vector<dim,t1>& pose_molecule, Vector<dim,t2>& vel_vector)
+    SLE(const std::array<Vector<dim,t1>, dim-1>& base,const Vector<dim,t1>& pose_border,const Vector<dim,t1>& pose_molecule,const Vector<dim,t2>& vel_vector)
     {
         #pragma GCC ivdep
         for (u i=0;i<dim-1;i++) A[i]=base[i]/t1(1);

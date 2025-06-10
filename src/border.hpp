@@ -4,6 +4,7 @@
 #include "standarts.hpp"
 #include "particle.hpp"
 #include "sle.hpp"
+#include <functional>
 
 template<u dim>
 class Border
@@ -11,13 +12,53 @@ class Border
 public:
     Vector<dim,Length> start;
     std::array<Vector<dim,Length>,dim-1> base;
+    std::function<void(Border<dim> &b, Particle<dim> &p)> bounceS;
+    Border(const std::array<Vector<dim,Length>, dim>& _base, const Vector<dim,Length>& _start):base(_base), start(_start)
+    {
+        bounceS=std::function<void(Border<dim> &b, Particle<dim> &p)>([](Border<dim> &b, Particle<dim> &p){});
+    }
+    Border(const std::array<Vector<dim,Length>, dim>& _base, const Vector<dim,Length>& _start, Temperature T):base(_base), start(_start)
+    {
+        bounceS=std::function<void(Border<dim> &b, Particle<dim> &p)>([T](Border<dim> &b, Particle<dim> &p){
+            p.velocity=(p.velocity/((p.velocity*p.velocity).sqrt()))*(Coefficient(1.5l)*k*T/p.m).sqrt();
+        });
+    }
+
+    void setTemp(Temperature T)
+    {
+        bounceS=std::function<void(Border<dim> &b, Particle<dim> &p)>([T](Border<dim> &b, Particle<dim> &p){
+            p.velocity=(p.velocity/((p.velocity*p.velocity).sqrt()))*(Coefficient(1.5l)*k*T/p.m).sqrt();
+        });
+    }
+
+    void setAdiabat()
+    {
+        bounceS=std::function<void(Border<dim> &b, Particle<dim> &p)>([](Border<dim> &b, Particle<dim> &p){});
+    }
 };
 
 template<u dim>
 Time FindIntersection(Border<dim>& b, Particle<dim>& p)
 {
-    Vector<dim, Coefficient> Vr=SLE(b.base,b.start,p.cord,p.velocity).result();
+    Vector<dim,Length> n=p.cord-b.start;
+    for(u i=0;i<dim-1;i++) n-=projection(b.base[i], n);
+    n=(n/((n*n).sqrt()))*p.radius;
+    Vector<dim, Coefficient> Vr=SLE(b.base,b.start+n,p.cord,p.velocity).result();
+    for(u i=0;i<dim-1;i++) if (Vr[i]>1) return std::numeric_limits<decltype(Vr[i].value)>::max();
+    if (Vr[dim-1]<0) return std::numeric_limits<decltype(Vr[i].value)>::max();
+    return Vr[dim-1];
 }
 
+template<u dim>
+void DoBounce(Border<dim>& b, Particle<dim>& p)
+{
+    Vector<dim,Length> n=p.cord-b.start;
+    for(u i=0;i<dim-1;i++) n-=projection(b.base[i], n);
+    if (n*n>p.radius*p.radius) return;
+    Vector<dim, Velocity> nvel=p.velocity;
+    for(u i=0;i<dim-1;i++) nvel-=projection(b.base[i], nvel);
+    p.velocity-=Coefficient(2)*nvel;
+    b.bounceS(b,p);
+}
 
 #endif

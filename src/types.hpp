@@ -78,20 +78,20 @@ public:
         return this->value < q2.value;
     }
 
-    bool operator>=(const DimQ&q2) const
-    {
-        return this->value >= q2.value;
-    }
-
-    bool operator<=(const DimQ&q2) const
-    {
-        return this->value <= q2.value;
-    }
-
     bool operator==(const DimQ&q2) const
     {
         return std::abs(this->value - q2.value)/
             (std::abs(this->value)+std::abs(q2.value)+epsilon) < epsilon;
+    }
+
+    bool operator>=(const DimQ&q2) const
+    {
+        return *this > q2 || *this == q2;
+    }
+
+    bool operator<=(const DimQ&q2) const
+    {
+        return *this <= q2 || *this == q2;
     }
 
     bool operator!=(const DimQ&q2) const

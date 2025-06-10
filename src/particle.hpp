@@ -22,10 +22,10 @@ class Quad
     decltype(typeA()*typeB()) b;
     decltype(typeB()*typeB()) c; 
     
-    Quad(typeA& A, typeB& B):a(A*A),b(2*A*B),c(B*B){}
+    Quad(const typeA& A,const typeB& B):a(A*A),b(2*A*B),c(B*B){}
     
     template<u dim>
-    Quad(Vector<dim,typeA>& A, Vector<dim,typeB>& B):a(0),b(0),c(0)
+    Quad(const Vector<dim,typeA>& A, const Vector<dim,typeB>& B):a(0),b(0),c(0)
     {
         #pragma GCC ivdep
         for (unsigned int i=0;i<dim;i++)
@@ -53,8 +53,8 @@ Time FindIntersection(Particle<dim>& p1, Particle<dim>& p2)
     Quad<Velocity, Length> q(p1.velocity-p2.velocity,p1.cord-p2.cord);
     q.c-=(p1.radius+p2.radius)*(p1.radius+p2.radius);
     Vector<2,Time> t_inter=q.findInter();
-    std::cout<<"\n"<<q.a<<" "<<q.b<<" "<<q.c<<"\n";
-    std::cout<<t_inter<<' ';
+    //std::cout<<"\n"<<q.a<<" "<<q.b<<" "<<q.c<<"\n";
+    //std::cout<<t_inter<<' ';
     if (t_inter.v[0]<0) return std::numeric_limits<decltype(q.c.value)>::max();
     return t_inter.v[0];
 }
