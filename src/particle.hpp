@@ -22,10 +22,10 @@ class Quad
     decltype(typeA()*typeB()) b;
     decltype(typeB()*typeB()) c; 
     
-    Quad(typeA A, typeB B):a(A*A),b(2*A*B),c(B*B){}
+    Quad(typeA& A, typeB& B):a(A*A),b(2*A*B),c(B*B){}
     
     template<u dim>
-    Quad(Vector<dim,typeA> A, Vector<dim,typeB> B):a(0),b(0),c(0)
+    Quad(Vector<dim,typeA>& A, Vector<dim,typeB>& B):a(0),b(0),c(0)
     {
         #pragma GCC ivdep
         for (unsigned int i=0;i<dim;i++)
@@ -57,12 +57,6 @@ Time FindIntersection(Particle<dim>& p1, Particle<dim>& p2)
     std::cout<<t_inter<<' ';
     if (t_inter.v[0]<0) return std::numeric_limits<decltype(q.c.value)>::max();
     return t_inter.v[0];
-}
-
-template<u dim, typename t1, typename t2>
-Vector<dim,t2> projection(Vector<dim,t1> a, Vector<dim, t2> v)
-{
-    return ((a*v)/(v*v))*v;
 }
 
 template<u dim>

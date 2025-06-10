@@ -111,7 +111,11 @@ std::ostream& operator<<(std::ostream& os, const Vector<dim, type>& obj)
     return os;
 }
 
-
+template<u dim, typename t1, typename t2>
+Vector<dim,t2> projection(Vector<dim,t1>& a, Vector<dim, t2>& v)
+{
+    return ((a*v)/(v*v))*v;
+}
 
 
 #endif
