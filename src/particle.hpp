@@ -65,7 +65,7 @@ Time FindIntersection(Particle<dim>& p1, Particle<dim>& p2)
     Vector<2,Time> t_inter=q.findInter();
     //std::cout<<"\n"<<q.a<<" "<<q.b<<" "<<q.c<<"\n";
     //std::cout<<t_inter<<' ';
-    if (t_inter.v[0]<0) return std::numeric_limits<decltype(q.c.value)>::max();
+    if (t_inter.v[0]<=0) return std::numeric_limits<decltype(q.c.value)>::max();
     return t_inter.v[0];
 }
 
@@ -73,10 +73,11 @@ template<u dim>
 void DoBounce(Particle<dim>& p1, Particle<dim>& p2)
 {
     Vector<dim,Length> a=p1.cord-p2.cord;
-    if ((a*a).sqrt()>(p1.radius+p2.radius)) return;
-    Vector<dim, Momentum> pr1=projection(a,p1.velocity),pr2=projection(a,p2.velocity);
-    auto v1n=(2*p1.m*pr1-pr2*(p1.m-p2.m))/(p1.m+p2.m);
-    auto v2n=(2*p2.m*pr2+pr1*(p1.m-p2.m))/(p1.m+p2.m);
+    if ((a*a).sqrt()*Coefficient(0.95)>(p1.radius+p2.radius)) return;
+    Vector<dim, Velocity> pr1=projection(a,p1.velocity),pr2=projection(a,p2.velocity);
+    if ((pr1-pr2)*a>0) return;
+    auto v1n=(pr1*Coefficient(2)*p1.m-pr2*(p1.m-p2.m))/(p1.m+p2.m);
+    auto v2n=(pr2*Coefficient(2)*p2.m+pr1*(p1.m-p2.m))/(p1.m+p2.m);
     p1.velocity=p1.velocity-pr1+v1n;
     p2.velocity=p2.velocity-pr2+v2n;
 }

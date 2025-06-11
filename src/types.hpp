@@ -90,7 +90,7 @@ public:
 
     bool operator<=(const DimQ&q2) const
     {
-        return *this <= q2 || *this == q2;
+        return *this < q2 || *this == q2;
     }
 
     bool operator!=(const DimQ&q2) const

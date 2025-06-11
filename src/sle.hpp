@@ -28,7 +28,7 @@ class SLE
         A[dim-1]=vel_vector/t2(-1);
         for (u i=1;i<dim;i++)
             for (u j=0;j<i;j++) std::swap(A[i][j],A[j][i]); // now this is system of rows
-        b=(pose_molecule-pose_border)/t2(1);
+        b=(pose_molecule-pose_border)/t1(1);
     }
 
     Vector<dim,Coefficient> result()

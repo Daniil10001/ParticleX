@@ -34,9 +34,10 @@ class Vector
         return *this;
     }
 
-    decltype(type()*type()) operator*(const Vector&v2) const
+    template<typename type2>
+    decltype(type()*type2()) operator*(const Vector<dim,type2>&v2) const
     {
-        decltype(type()*type()) sp=0;
+        decltype(type()*type2()) sp=0;
         #pragma GCC ivdep
         for (unsigned int i=0;i<dim;i++)
             sp+=this->v[i]*v2[i];
@@ -115,7 +116,13 @@ std::ostream& operator<<(std::ostream& os, const Vector<dim, type>& obj)
 template<u dim, typename t1, typename t2>
 Vector<dim,t2> projection(Vector<dim,t1>& a, Vector<dim, t2>& v)
 {
-    return ((a*v)/(v*v))*v;
+    return a*((a*v)/(a*a));
+}
+
+template<u dim, typename type>
+type abs(const Vector<dim, type>& v)
+{
+    return (v*v).sqrt();
 }
 
 

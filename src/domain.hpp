@@ -29,7 +29,7 @@ std::array<std::array<Vector<dim, Length>,dim-1>,2*dim> borderGenerator(const Ve
 }
 
 template<u dim, u crd>
-bool sortPtclsByCord(Particle<dim>* a,Particle<dim>* b)
+bool cmpPBCrd(Particle<dim>* a,Particle<dim>* b)
 {
     return a->cord[crd]<b->cord[crd];
 }
@@ -40,6 +40,7 @@ class Domain
     public:
     std::array<Border<dim>,2*dim> borders;
     Vector<dim, Length> lns;
+    Volume V;
     std::array<Length, dim> start;
     std::vector<Particle<dim>> ptcls;
     std::array<std::vector<Particle<dim>*>,dim> ptclPerDimSrt;
@@ -47,6 +48,8 @@ class Domain
 
     Domain(const std::array<Length, dim>& lns_borders):lns(lns_borders),State(0){
         start.fill(1);
+        V=1;
+        for (u i=0;i<dim;i++) V=V*lns[i]/Length(1);
         auto brdrs=borderGenerator(lns);
         for (u i=0;i<dim;i++)
         {
@@ -58,13 +61,13 @@ class Domain
         }
     }
 
-    Domain(const Domain& d):borders(d.borders),lns(d.lns),start(d.start),ptcls(d.ptcls),ptclPerDimSrt(d.ptclPerDimSrt),State(d.State){}
+    //Domain(const Domain& d):borders(d.borders),lns(d.lns),V(d.V),start(d.start),ptcls(d.ptcls),ptclPerDimSrt(d.ptclPerDimSrt),State(d.State){}
 
     void prepare()
     {
         std::vector<std::thread> ths;
         [&]<size_t... I>(std::index_sequence<I...>){
-        (ths.emplace_back([&](){std::sort(ptclPerDimSrt[I].begin(),ptclPerDimSrt[I].end(),sortPtclsByCord<dim,I>);}), ...);}
+        (ths.emplace_back([&](){std::sort(ptclPerDimSrt[I].begin(),ptclPerDimSrt[I].end(),cmpPBCrd<dim,I>);}), ...);}
         (std::make_index_sequence<dim>{});
         for (std::thread& th: ths) th.join();
     }
@@ -87,10 +90,14 @@ class Domain
                 crd[c]+=lns[c]*Coefficient((0.8L*(n%Nc))/Nc);
                 c++;
             }
-            
-            ld fi1=unifRandDirection(),fi2=unifRandDirection();
-            Vector<dim,Velocity> v({mV*Coefficient(cosl(fi1)*sinl(fi2)),
-                    mV*Coefficient(cosl(fi1)*cosl(fi2)),mV*Coefficient(sinl(fi1))});
+            Vector<dim,Velocity> v;
+            v[0]=mV;
+            for (u np=0;np<dim-1;np++)
+            {
+                long double fi = unifRandDirection();
+                v[np+1]=v[np]*Coefficient(cosl(fi));
+                v[np]=v[np]*Coefficient(sinl(fi));
+            }
             ptcls[i]=Particle<dim>(m,radius,crd,v);
             for (u d=0;d<dim;d++)
                 ptclPerDimSrt[d][i]=&ptcls[i];

@@ -25,7 +25,7 @@ public:
         });
     }
 
-    Border(const Border& b):start(b.start),base(b.base),bounceS(b.bounceS){}
+    Border(const Border& b):base(b.base),start(b.start),bounceS(b.bounceS){}
 
     Border& operator=(const Border& b)
     {
@@ -56,8 +56,8 @@ Time FindIntersection(Border<dim>& b, Particle<dim>& p)
     n=(n/((n*n).sqrt()))*p.radius;
     Vector<dim, Coefficient> Vr=SLE(b.base,b.start+n,p.cord,p.velocity).result();
     for(u i=0;i<dim-1;i++) if (Vr[i]>1) return std::numeric_limits<decltype(Vr[i].value)>::max();
-    if (Vr[dim-1]<0) return std::numeric_limits<decltype(Vr[dim-1].value)>::max();
-    return Vr[dim-1];
+    if (Vr[dim-1]<=0) return std::numeric_limits<decltype(Vr[dim-1].value)>::max();
+    return Vr[dim-1]*Time(1);
 }
 
 template<u dim>
@@ -65,11 +65,14 @@ void DoBounce(Border<dim>& b, Particle<dim>& p)
 {
     Vector<dim,Length> n=p.cord-b.start;
     for(u i=0;i<dim-1;i++) n-=projection(b.base[i], n);
-    if (n*n>p.radius*p.radius) return;
+    if (n*n*Coefficient(0.95)>p.radius*p.radius) return;
+    //std::cout<<"b";
     Vector<dim, Velocity> nvel=p.velocity;
     for(u i=0;i<dim-1;i++) nvel-=projection(b.base[i], nvel);
-    p.velocity-=Coefficient(2)*nvel;
+    if (n*nvel>0) return;
+    p.velocity-=nvel*Coefficient(2);
     b.bounceS(b,p);
+    
 }
 
 #endif

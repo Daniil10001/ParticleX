@@ -2,6 +2,7 @@
 #include"particle.hpp"
 #include"sle.hpp"
 #include"domain.hpp"
+#include "solver.hpp"
 
 int main()
 {
@@ -18,15 +19,17 @@ int main()
     Vector<2,Coefficient>({-3,2}),Vector<2,Coefficient>({1,-1}));
     std::cout<<S.result();
     //--------------------------------
-    Domain<3> d({Length(1),Length(2),Length(3)});
+    Domain<2> d({Length(1),Length(2)/*,Length(3)*/});
     std::cout<<d<<'\n';
     d.addParticlesS(MolarMass(1)/Na,200,1e-10,20);
     d.prepare();
-    for (u i=0;i<3;i++){
+    for (u i=0;i<2;i++){
         for (u j=0;j<20;j++)
             std::cout<<(d.ptclPerDimSrt[i][j])->cord<<'\n';
         std::cout<<"\n";
     }
     //--------------------------------
+    Solver<2> s(d);
+    s.solve(1,0.1,std::cout);
     return 0;
 }
