@@ -11,7 +11,17 @@ class Particle
     Vector<dim, Length> cord;
     Mass m;
     Length radius;
-    Particle(Mass _m, Length _r,const std::initializer_list<Length>& crd,const std::initializer_list<Velocity>& vel):velocity(vel),cord(crd),m(_m),radius(_r){}
+    Particle(){}
+    Particle(Mass _m, Length _r,const Vector<dim,Length>& crd,const Vector<dim,Velocity>& vel):velocity(vel),cord(crd),m(_m),radius(_r){}
+    Particle(const Particle& p):velocity(p.velocity),cord(p.cord),m(p.m),radius(p.radius){}
+    Particle& operator=(const Particle& p)
+    {
+        this->velocity=p.velocity;
+        this->cord=p.cord;
+        this->m=p.m;
+        this->radius=p.radius;
+        return *this;
+    }
 };
 
 template<typename typeA, typename typeB> //(At-B)^2

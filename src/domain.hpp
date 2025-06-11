@@ -3,6 +3,10 @@
 
 #include "border.hpp"
 #include "particle.hpp"
+#include <utility> 
+#include <algorithm>
+#include <thread>
+#include <exception>
 
 // for n-d
 
@@ -24,6 +28,12 @@ std::array<std::array<Vector<dim, Length>,dim-1>,2*dim> borderGenerator(const Ve
     return res;
 }
 
+template<u dim, u crd>
+bool sortPtclsByCord(Particle<dim>* a,Particle<dim>* b)
+{
+    return a->cord[crd]<b->cord[crd];
+}
+
 template<u dim>
 class Domain
 {
@@ -32,7 +42,7 @@ class Domain
     Vector<dim, Length> lns;
     std::array<Length, dim> start;
     std::vector<Particle<dim>> ptcls;
-    std::array<std::vector<Particle<dim>>,dim> ptclPerDimSrt;
+    std::array<std::vector<Particle<dim>*>,dim> ptclPerDimSrt;
     u State;
 
     Domain(const std::array<Length, dim>& lns_borders):lns(lns_borders),State(0){
@@ -48,24 +58,43 @@ class Domain
         }
     }
 
+    Domain(const Domain& d):borders(d.borders),lns(d.lns),start(d.start),ptcls(d.ptcls),ptclPerDimSrt(d.ptclPerDimSrt),State(d.State){}
+
+    void prepare()
+    {
+        std::vector<std::thread> ths;
+        [&]<size_t... I>(std::index_sequence<I...>){
+        (ths.emplace_back([&](){std::sort(ptclPerDimSrt[I].begin(),ptclPerDimSrt[I].end(),sortPtclsByCord<dim,I>);}), ...);}
+        (std::make_index_sequence<dim>{});
+        for (std::thread& th: ths) th.join();
+    }
+
     void addParticlesS(Mass m, Temperature T, Length radius, ul N)
     {
+        if (State==1) throw std::runtime_error("You can add particles only one time!");
+        State=1; 
         Velocity mV=(Coefficient(1.5)*(k*T/m)).sqrt();
         ptcls.resize(N);
+        for (u d=0;d<dim;d++)
+            ptclPerDimSrt[d].resize(N);
         ul Nc=std::lround(std::ceil(std::pow(N,1./dim)));
         for (ul i=0;i<N;i++)
         {
             u c=0;
-            Vector<dim,Length> crd=start+0.1*lns;
+            Vector<dim,Length> crd=Vector<dim,Length>(start)+lns*Coefficient(0.1);
             for (ul n=i;n>0;n/=Nc) 
             {
                 crd[c]+=lns[c]*Coefficient((0.8L*(n%Nc))/Nc);
                 c++;
             }
+            
             ld fi1=unifRandDirection(),fi2=unifRandDirection();
             Vector<dim,Velocity> v({mV*Coefficient(cosl(fi1)*sinl(fi2)),
                     mV*Coefficient(cosl(fi1)*cosl(fi2)),mV*Coefficient(sinl(fi1))});
-            ptcls=Particle<dim>(m,radius,crd,v);
+            ptcls[i]=Particle<dim>(m,radius,crd,v);
+            for (u d=0;d<dim;d++)
+                ptclPerDimSrt[d][i]=&ptcls[i];
+            std::cout<<crd<<" "<<v<<'\n';
         }
     }
 };

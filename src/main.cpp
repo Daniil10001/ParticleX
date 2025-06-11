@@ -20,5 +20,13 @@ int main()
     //--------------------------------
     Domain<3> d({Length(1),Length(2),Length(3)});
     std::cout<<d<<'\n';
+    d.addParticlesS(MolarMass(1)/Na,200,1e-10,20);
+    d.prepare();
+    for (u i=0;i<3;i++){
+        for (u j=0;j<20;j++)
+            std::cout<<(d.ptclPerDimSrt[i][j])->cord<<'\n';
+        std::cout<<"\n";
+    }
+    //--------------------------------
     return 0;
 }

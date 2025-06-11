@@ -38,7 +38,6 @@ public:
         return DimQ<L - L1, M - M1, t - t1, T - T1, mu-mu1>(this->value / q2.value);
     }
 
-
     DimQ<L/2,M/2,t/2,T/2,mu/2> sqrt()
     {
         static_assert(L%2==0);
@@ -155,9 +154,10 @@ static const auto R=Na*k;
 template <typename T>
 struct is_DimQ : std::false_type {};
 
-// Специализация для DimQ с 5 int-параметрами
+
 template <int L, int M, int t, int T, int mu>
 struct is_DimQ<DimQ<L, M, t, T, mu>> : std::true_type {};
+
 
 template <typename T>
 inline constexpr bool is_DimQ_v = is_DimQ<T>::value;
