@@ -10,18 +10,29 @@ template<u dim>
 class Border
 {
 public:
-    Vector<dim,Length> start;
     std::array<Vector<dim,Length>,dim-1> base;
+    Vector<dim,Length> start;    
     std::function<void(Border<dim> &b, Particle<dim> &p)> bounceS;
-    Border(const std::array<Vector<dim,Length>, dim>& _base, const Vector<dim,Length>& _start):base(_base), start(_start)
+    Border(){};
+    Border(const std::array<Vector<dim,Length>, dim-1>& _base, const Vector<dim,Length>& _start):base(_base), start(_start)
     {
-        bounceS=std::function<void(Border<dim> &b, Particle<dim> &p)>([](Border<dim> &b, Particle<dim> &p){});
+        bounceS=std::function<void(Border<dim> &b, Particle<dim> &p)>([](Border<dim>&, Particle<dim>&){});
     }
-    Border(const std::array<Vector<dim,Length>, dim>& _base, const Vector<dim,Length>& _start, Temperature T):base(_base), start(_start)
+    Border(const std::array<Vector<dim,Length>, dim-1>& _base, const Vector<dim,Length>& _start, Temperature T):base(_base), start(_start)
     {
-        bounceS=std::function<void(Border<dim> &b, Particle<dim> &p)>([T](Border<dim> &b, Particle<dim> &p){
+        bounceS=std::function<void(Border<dim> &b, Particle<dim> &p)>([T](Border<dim>&, Particle<dim> &p){
             p.velocity=(p.velocity/((p.velocity*p.velocity).sqrt()))*(Coefficient(1.5l)*k*T/p.m).sqrt();
         });
+    }
+
+    Border(const Border& b):start(b.start),base(b.base),bounceS(b.bounceS){}
+
+    Border& operator=(const Border& b)
+    {
+        this->base=b.base;
+        this->bounceS=b.bounceS;
+        this->start=b.start;
+        return *this;
     }
 
     void setTemp(Temperature T)
@@ -45,7 +56,7 @@ Time FindIntersection(Border<dim>& b, Particle<dim>& p)
     n=(n/((n*n).sqrt()))*p.radius;
     Vector<dim, Coefficient> Vr=SLE(b.base,b.start+n,p.cord,p.velocity).result();
     for(u i=0;i<dim-1;i++) if (Vr[i]>1) return std::numeric_limits<decltype(Vr[i].value)>::max();
-    if (Vr[dim-1]<0) return std::numeric_limits<decltype(Vr[i].value)>::max();
+    if (Vr[dim-1]<0) return std::numeric_limits<decltype(Vr[dim-1].value)>::max();
     return Vr[dim-1];
 }
 

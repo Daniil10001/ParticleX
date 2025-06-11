@@ -22,6 +22,7 @@ class Vector
             this->v[i]=*(l.begin()+i);
     }
     Vector(const Vector &V):v(V.v){}
+    Vector(const std::array<type, dim>& data):v(data){}
     Vector(){v.fill(0);}
 
     type& operator[](std::size_t at) {return this->v[at];}
@@ -106,7 +107,7 @@ std::ostream& operator<<(std::ostream& os, const Vector<dim, type>& obj)
 {
     os<<"<";
     for (unsigned int i=0;i<dim;i++)
-        os<<obj.v[i].value<<(i!=dim-1?",":"");
+        os<<obj.v[i]<<(i!=dim-1?",":"");
     os<<">";
     return os;
 }

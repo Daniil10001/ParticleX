@@ -121,7 +121,7 @@ template <int L, int M, int t, int T, int mu>
 std::ostream& operator<<(std::ostream& os, const DimQ<L,M,t,T,mu>& obj)
 {
     os<<obj.value;
-    return print_Dim(os,obj);
+    return os;//print_Dim(os,obj);
 }
 
 // Псевдонимы типов

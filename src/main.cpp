@@ -1,6 +1,7 @@
 #include<iostream>
 #include"particle.hpp"
 #include"sle.hpp"
+#include"domain.hpp"
 
 int main()
 {
@@ -16,5 +17,8 @@ int main()
     SLE<2> S(std::array<Vector<2,Coefficient>,1>({Vector<2,Coefficient>({0,1})}),Vector<2,Coefficient>({0,0}),
     Vector<2,Coefficient>({-3,2}),Vector<2,Coefficient>({1,-1}));
     std::cout<<S.result();
+    //--------------------------------
+    Domain<3> d({Length(1),Length(2),Length(3)});
+    std::cout<<d<<'\n';
     return 0;
 }
