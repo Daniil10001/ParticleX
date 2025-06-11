@@ -1,4 +1,6 @@
 #include<iostream>
+#include<fstream>
+#include <iomanip>
 #include"particle.hpp"
 #include"sle.hpp"
 #include"domain.hpp"
@@ -11,17 +13,23 @@ int main()
     std::cout<<v*v;
     v+=v;
     std::cout<<" "<<v*v<<" "<<(v*t)<<'\n';
-    Particle<2> a(0,0.01,{0,1},{1,0});
-    Particle<2> b(0,0.01,{1,0},{0,1});
+    Particle<2> a(0.1,2e-1,{0,1},{1,0});
+    Particle<2> b(0.1,2e-1,{1,0},{0,1});
+    Time T=FindIntersection(a,b);
+    a.cord+=a.velocity*T;
+    b.cord+=b.velocity*T;
+    DoBounce(a,b);
     std::cout<<FindIntersection(a,b)<<'\n';
+    std::cout<<a.cord<<" "<<b.cord<<'\n';
+    std::cout<<a.velocity<<" "<<b.velocity<<'\n';
     //--------------------------------
     SLE<2> S(std::array<Vector<2,Coefficient>,1>({Vector<2,Coefficient>({0,1})}),Vector<2,Coefficient>({0,0}),
     Vector<2,Coefficient>({-3,2}),Vector<2,Coefficient>({1,-1}));
     std::cout<<S.result();
     //--------------------------------
-    Domain<2> d({Length(1),Length(2)/*,Length(3)*/});
+    Domain<2> d({Length(1e-3),Length(1e-3)/*,Length(3)*/});
     std::cout<<d<<'\n';
-    d.addParticlesS(MolarMass(1)/Na,200,1e-10,20);
+    d.addParticlesS(MolarMass(12)/Na,273,1e-6,2000);
     d.prepare();
     for (u i=0;i<2;i++){
         for (u j=0;j<20;j++)
@@ -30,6 +38,10 @@ int main()
     }
     //--------------------------------
     Solver<2> s(d);
-    s.solve(1,0.1,std::cout);
+    std::ofstream f;
+    f<<std::setprecision(20);
+    f.open("res.txt");
+    s.solve(0.00005,0.0000001,f);
+    f.close();
     return 0;
 }

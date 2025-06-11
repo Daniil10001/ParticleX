@@ -16,7 +16,7 @@ set(BUILD_SHARED_LIBS FALSE)
 # Set standarts
 # ----------------------------------------------
 set(CMAKE_CXX_STANDARD 20)
-add_compile_options(-Wall -Wextra -Wpedantic -O2)
+add_compile_options(-Wall -Wextra -Wpedantic -O2 -pthread)
 include_directories(./include)
 
 include(./src/CMakeLists.txt)

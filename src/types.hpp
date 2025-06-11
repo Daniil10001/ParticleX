@@ -8,7 +8,7 @@ class DimQ
 {
 public:
     long double value;
-    static constexpr const long double epsilon = 1e-9l;
+    static constexpr const long double epsilon = 1e-12l;
 
     DimQ(long double _value) : value(_value) {}
     DimQ() : DimQ(0) {}
@@ -79,8 +79,7 @@ public:
 
     bool operator==(const DimQ&q2) const
     {
-        return std::abs(this->value - q2.value)/
-            (std::abs(this->value)+std::abs(q2.value)+epsilon) < epsilon;
+        return std::abs(this->value - q2.value) < epsilon;
     }
 
     bool operator>=(const DimQ&q2) const
