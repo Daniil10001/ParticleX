@@ -2,6 +2,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+from matplotlib.scale import ScaleBase
+from matplotlib.transforms import Transform
+
+class DataSizeTransform(Transform):
+    input_dims = output_dims = 2
+
+    def __init__(self, ax, size):
+        super().__init__()
+        self.ax = ax
+        self.size = size  # Диаметр в единицах данных
+
+    def transform(self, values):
+        # Рассчитываем площадь точек при текущем масштабе
+        fig = self.ax.figure
+        fig_width_inch = fig.get_figwidth()
+        x_min, x_max = self.ax.get_xlim()
+        units_per_inch = (x_max - x_min) / fig_width_inch
+        diameter_points = self.size / units_per_inch * 72
+        area = np.pi * (diameter_points / 2) ** 2
+        return np.full_like(values, area)  # Одинаковый размер для всех
+
 def parse_file(filename):
     data = []
     with open(filename, 'r') as file:
@@ -30,7 +51,7 @@ def parse_file(filename):
     return data
 
 # Считываем данные из файла
-parsed_data = parse_file('ft.txt')
+parsed_data = parse_file('res.txt')
 
 # Создаем фигуру и оси
 fig, ax = plt.subplots(figsize=(10, 8))
@@ -44,11 +65,13 @@ ax.grid(True, linestyle='--', alpha=0.7)
 # Определяем границы графика
 all_x = [coord[0] for time, points in parsed_data for (coord), _ in points]
 all_y = [coord[1] for time, points in parsed_data for (coord), _ in points]
-ax.set_xlim(min(all_x) - 5, max(all_x) + 5)
-ax.set_ylim(min(all_y) - 5, max(all_y) + 5)
+ax.set_xlim(min(all_x), max(all_x))
+ax.set_ylim(min(all_y), max(all_y))
 
 # Создаем объект scatter с пустыми данными
-scatter = ax.scatter([], [], s=30, c='blue', alpha=0.7)
+transform = DataSizeTransform(ax, size=1e-6)
+print(transform.transform(None))
+scatter = ax.scatter([], [], s=float(transform.transform(None)), c='blue', alpha=0.7)
 time_text = ax.text(0.02, 0.95, '', transform=ax.transAxes, fontsize=12)
 
 def init():
@@ -79,8 +102,8 @@ ani = FuncAnimation(
     frames=len(parsed_data),
     init_func=init,
     blit=True,
-    interval=200,  # 200 мс между кадрами
-    repeat_delay=2000  # 2 секунды перед повторением
+    interval=100,  # 200 мс между кадрами
+    repeat_delay=0  # 2 секунды перед повторением
 )
 
 plt.tight_layout()
