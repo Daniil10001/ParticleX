@@ -27,15 +27,16 @@ int main()
     Vector<2,Coefficient>({-3,2}),Vector<2,Coefficient>({1,-1}));
     std::cout<<S.result();
     //--------------------------------
+    
     Domain<2> d({Length(1e-3),Length(1e-3)/*,Length(3)*/});
     std::cout<<d<<'\n';
-    d.addParticlesS(MolarMass(12)/Na,273,1e-6,2000);
+    d.addParticlesM<2>({(PtclParametr){MolarMass(1)/Na,300,1e-6,2000}});//,(PtclParametr){MolarMass(1)/Na,273,1e-6,2000}});
     d.prepare();
-    for (u i=0;i<2;i++){
+    /*for (u i=0;i<2;i++){
         for (u j=0;j<20;j++)
             std::cout<<(d.ptclPerDimSrt[i][j])->cord<<'\n';
         std::cout<<"\n";
-    }
+    }*/
     //--------------------------------
     Solver<2> s(d);
     std::ofstream f;
@@ -43,5 +44,6 @@ int main()
     f.open("res.txt");
     s.solve(0.00005,0.0000001,f);
     f.close();
+    
     return 0;
 }

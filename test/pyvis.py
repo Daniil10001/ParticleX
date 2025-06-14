@@ -71,14 +71,17 @@ ax.set_ylim(min(all_y), max(all_y))
 # Создаем объект scatter с пустыми данными
 transform = DataSizeTransform(ax, size=1e-6)
 print(transform.transform(None))
-scatter = ax.scatter([], [], s=float(transform.transform(None)), c='blue', alpha=0.7)
+scatters = [ax.scatter([], [], s=float(transform.transform(None)), c='blue', alpha=0.7), ax.scatter([], [], s=float(transform.transform(None)), c='red', alpha=0.7)]
 time_text = ax.text(0.02, 0.95, '', transform=ax.transAxes, fontsize=12)
+
+delim=[(0,2000),(2000,4000)]
 
 def init():
     """Инициализация анимации"""
-    scatter.set_offsets(np.empty((0, 2)))
+    for scatter in scatters:
+        scatter.set_offsets(np.empty((0, 2)))
     time_text.set_text('')
-    return scatter, time_text
+    return *scatters, time_text
 
 def update(frame):
     """Обновление кадра анимации"""
@@ -88,12 +91,13 @@ def update(frame):
     coords = np.array([coord for (coord), _ in points])
     
     # Обновляем позиции частиц
-    scatter.set_offsets(coords)
+    for i,scatter in enumerate(scatters):
+        scatter.set_offsets(coords[delim[i][0]:delim[i][1]])
     
     # Обновляем текст с временем
     time_text.set_text(f'Время: {time:.6f} с\nЧастиц: {len(coords)}')
     
-    return scatter, time_text
+    return *scatters, time_text
 
 # Создаем анимацию
 ani = FuncAnimation(
