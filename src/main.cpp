@@ -28,9 +28,9 @@ int main()
     std::cout<<S.result();
     //--------------------------------
     
-    Domain<2> d({Length(1e-3),Length(1e-3)/*,Length(3)*/});
+    Domain<2> d({Length(10),Length(10)/*,Length(3)*/});
     std::cout<<d<<'\n';
-    d.addParticlesM<2>({(PtclParametr){MolarMass(1)/Na,300,1e-6,2000}});//,(PtclParametr){MolarMass(1)/Na,273,1e-6,2000}});
+    d.addParticlesM<2>({(PtclParametr){MolarMass(1),300,0.01,4000}});//,(PtclParametr){MolarMass(1)/Na,273,1e-6,2000}});
     d.prepare();
     /*for (u i=0;i<2;i++){
         for (u j=0;j<20;j++)
@@ -42,7 +42,7 @@ int main()
     std::ofstream f;
     f<<std::setprecision(20);
     f.open("res.txt");
-    s.solve(0.00005,0.0000001,f);
+    s.solve(0.05,0.0001,f);
     f.close();
     
     return 0;

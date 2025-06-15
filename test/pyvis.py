@@ -11,7 +11,7 @@ class DataSizeTransform(Transform):
     def __init__(self, ax, size):
         super().__init__()
         self.ax = ax
-        self.size = size  # Диаметр в единицах данных
+        self.size = size*2  # Диаметр в единицах данных
 
     def transform(self, values):
         # Рассчитываем площадь точек при текущем масштабе
@@ -51,7 +51,7 @@ def parse_file(filename):
     return data
 
 # Считываем данные из файла
-parsed_data = parse_file('res.txt')
+parsed_data = parse_file('res_s4.txt')
 
 # Создаем фигуру и оси
 fig, ax = plt.subplots(figsize=(10, 8))
@@ -69,12 +69,12 @@ ax.set_xlim(min(all_x), max(all_x))
 ax.set_ylim(min(all_y), max(all_y))
 
 # Создаем объект scatter с пустыми данными
-transform = DataSizeTransform(ax, size=1e-6)
+transform = DataSizeTransform(ax, size=0.01)
 print(transform.transform(None))
-scatters = [ax.scatter([], [], s=float(transform.transform(None)), c='blue', alpha=0.7), ax.scatter([], [], s=float(transform.transform(None)), c='red', alpha=0.7)]
+scatters = [ax.scatter([], [], s=float(transform.transform(None)), c='blue', alpha=0.7)]
 time_text = ax.text(0.02, 0.95, '', transform=ax.transAxes, fontsize=12)
 
-delim=[(0,2000),(2000,4000)]
+delim=[(0,4000)]
 
 def init():
     """Инициализация анимации"""

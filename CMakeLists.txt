@@ -19,7 +19,7 @@ set(BUILD_SHARED_LIBS FALSE)
 find_package(Threads REQUIRED)
 
 set(CMAKE_CXX_STANDARD 20)
-add_compile_options(-Wall -Wextra -Wpedantic -O2)
+add_compile_options(-Wall -Wextra -Wpedantic)
 include_directories(./include)
 
 include(./src/CMakeLists.txt)

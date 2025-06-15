@@ -114,7 +114,7 @@ std::ostream& operator<<(std::ostream& os, const Vector<dim, type>& obj)
 }
 
 template<u dim, typename t1, typename t2>
-Vector<dim,t2> projection(Vector<dim,t1>& a, Vector<dim, t2>& v)
+Vector<dim,t2> projection(const Vector<dim,t1>& a, const Vector<dim, t2>& v)
 {
     return a*((a*v)/(a*a));
 }

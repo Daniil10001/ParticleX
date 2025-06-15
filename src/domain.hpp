@@ -12,7 +12,7 @@
 
 struct PtclParametr
 {
-    Mass m;
+    MolarMass mu;
     Temperature T;
     Length radius;
     ul N;
@@ -79,18 +79,22 @@ public:
         std::vector<std::thread> ths;
         [&]<size_t... I>(std::index_sequence<I...>)
         { (ths.emplace_back([&]()
-                            { std::sort(ptclPerDimSrt[I].begin(), ptclPerDimSrt[I].end(), cmpPBCrd<dim, I>); }),
+                            {
+                                for (ul i = 0; i < ptcls.size(); i++)
+                                    ptclPerDimSrt[I][i] = &ptcls[i];
+                                std::sort(ptclPerDimSrt[I].begin(), ptclPerDimSrt[I].end(), cmpPBCrd<dim, I>);
+                            }),
            ...); }(std::make_index_sequence<dim>{});
         for (std::thread &th : ths)
             th.join();
     }
 
-    void addParticlesS(Mass m, Temperature T, Length radius, ul N)
+    void addParticlesS(MolarMass mu, Temperature T, Length radius, ul N)
     {
         if (State == 1)
             throw std::runtime_error("You can add particles only one time!");
         State = 1;
-        Velocity mV = (Coefficient(dim/2.) * (k * T / m)).sqrt();
+        Velocity mV = (Coefficient(dim) * T* (R / mu)).sqrt();
         ptcls.resize(N);
         for (u d = 0; d < dim; d++)
             ptclPerDimSrt[d].resize(N);
@@ -112,14 +116,14 @@ public:
                 v[np + 1] = v[np] * Coefficient(cosl(fi));
                 v[np] = v[np] * Coefficient(sinl(fi));
             }
-            ptcls[i] = Particle<dim>(m, radius, crd, v);
+            ptcls[i] = Particle<dim>(mu/fNa, radius, crd, v);
             for (u d = 0; d < dim; d++)
                 ptclPerDimSrt[d][i] = &ptcls[i];
             std::cout << crd << " " << v << '\n';
         }
     }
 
-    void addParticlesS(const PtclParametr &p) { addParticlesS(p.m, p.T, p.radius, p.N); }
+    void addParticlesS(const PtclParametr &p) { addParticlesS(p.mu, p.T, p.radius, p.N); }
 
     template <u Np>
     void addParticlesM(const std::array<PtclParametr, Np> pms)
@@ -137,7 +141,7 @@ public:
         ul i = 0;
         for (u tp = 0; tp < Np; tp++)
         {
-            Velocity mV = (Coefficient(1.5) * (k * pms[tp].T / pms[tp].m)).sqrt();
+            Velocity mV = (Coefficient(dim) * pms[tp].T * R / pms[tp].mu).sqrt();
             for (ul _i = 0; _i < pms[tp].N; _i++)
             {
 
@@ -156,7 +160,7 @@ public:
                     v[np + 1] = v[np] * Coefficient(cosl(fi));
                     v[np] = v[np] * Coefficient(sinl(fi));
                 }
-                ptcls[i] = Particle<dim>(pms[tp].m, pms[tp].radius, crd, v);
+                ptcls[i] = Particle<dim>(pms[tp].mu/fNa, pms[tp].radius, crd, v);
                 for (u d = 0; d < dim; d++)
                     ptclPerDimSrt[d][i] = &ptcls[i];
                 std::cout << crd << " " << v << '\n';

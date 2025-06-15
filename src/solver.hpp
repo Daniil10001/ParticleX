@@ -33,7 +33,7 @@ public:
     Time findInters(Particle<dim>& p)
     {
         Time t=std::numeric_limits<decltype(p.m.value)>::max();
-        Length l=abs(p.velocity*delt_t)*Coefficient(2.5);
+        Length l=abs(p.velocity*delt_t)*Coefficient(3);
         [&]<size_t... I>(std::index_sequence<I...>){
         ([&](){
         auto its=std::lower_bound(d.ptclPerDimSrt[I].begin(),d.ptclPerDimSrt[I].end(),p.cord[I]-l,cmpPBCrdL<dim,I>);
@@ -52,7 +52,7 @@ public:
 
     void Bounses(Particle<dim>& p)
     {
-        Length l=p.radius*Coefficient(4);
+        Length l=p.radius*Coefficient(3);
         [&]<size_t... I>(std::index_sequence<I...>){
         ([&](){
         auto its=std::lower_bound(d.ptclPerDimSrt[I].begin(),d.ptclPerDimSrt[I].end(),p.cord[I]-l,cmpPBCrdL<dim,I>);
@@ -74,6 +74,7 @@ public:
         d.prepare();
         std::vector<Time> ts;
         std::vector<std::thread> ths;
+        Energy E=0;
         ul fi;
         while (now-_now<delt)
         {
@@ -81,16 +82,21 @@ public:
             {
                 std::cout<<'\n'<<"dt:"<<delt_t<<" "<<now<<'\n';
                 os<<now<<"|";
+                E=0;
                 for (ul i=0;i<d.ptcls.size();i++)
+                {
                     os<<d.ptcls[i].cord<<" "<<d.ptcls[i].velocity*d.ptcls[i].velocity<<";";
+                    E+=d.ptcls[i].velocity*d.ptcls[i].velocity*d.ptcls[i].m;
+                }
                 os<<std::endl;
+                std::cout<<E<<'\n';
                 pw=now;
             }
             delt_t=std::min(Time(1e-2),dw-(now-pw));
             for (ul i=0;i<d.ptcls.size();)
             {
                 fi=i;
-                ts=std::vector<Time>(NPROC,std::numeric_limits<long double>::infinity());
+                ts=std::vector<Time>(NPROC,std::numeric_limits<ld>::infinity());
                 ths.clear();
                 while (i-fi<NPROC && i<d.ptcls.size())
                 {

@@ -7,10 +7,10 @@ template <int L, int M, int t, int T, int mu>
 class DimQ
 {
 public:
-    long double value;
-    static constexpr const long double epsilon = 1e-12l;
+    ld value;
+    static constexpr const ld epsilon = 1e-7l;
 
-    DimQ(long double _value) : value(_value) {}
+    DimQ(ld _value) : value(_value) {}
     DimQ() : DimQ(0) {}
 
     // Шаблонный оператор изменения знака
@@ -145,6 +145,7 @@ typedef decltype(Velocity()*Mass()) Momentum;
 
 // Константы
 static const DimQ<0,0,0,0,-1> Na(6.02e23L);
+static const DimQ<0,0,0,0,-1> fNa(1);
 static const decltype(Energy()/Temperature()) k(1.38e-23l);
 static const auto R=Na*k;
 

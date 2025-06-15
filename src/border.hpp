@@ -65,7 +65,7 @@ void DoBounce(Border<dim>& b, Particle<dim>& p)
 {
     Vector<dim,Length> n=p.cord-b.start;
     for(u i=0;i<dim-1;i++) n-=projection(b.base[i], n);
-    if (n*n*Coefficient(0.95)>p.radius*p.radius) return;
+    if (n*n*Coefficient(0.9999)>p.radius*p.radius) return;
     //std::cout<<"b";
     Vector<dim, Velocity> nvel=p.velocity;
     for(u i=0;i<dim-1;i++) nvel-=projection(b.base[i], nvel);
