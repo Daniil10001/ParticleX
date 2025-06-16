@@ -146,7 +146,7 @@ public:
             {
 
                 u c = 0;
-                Vector<dim, Length> crd = Vector<dim, Length>(start) + lns * Coefficient(0.1);
+                Vector<dim, Length> crd = Vector<dim, Length>(start) + lns * Coefficient(0.01);
                 for (ul n = i; n > 0; n /= Nc)
                 {
                     crd[c] += lns[c] * Coefficient((0.8L * (n % Nc)) / Nc);

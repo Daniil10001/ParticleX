@@ -51,7 +51,7 @@ def parse_file(filename):
     return data
 
 # Считываем данные из файла
-parsed_data = parse_file('res_s4.txt')
+parsed_data = parse_file('res.txt')
 
 # Создаем фигуру и оси
 fig, ax = plt.subplots(figsize=(10, 8))
@@ -68,13 +68,17 @@ all_y = [coord[1] for time, points in parsed_data for (coord), _ in points]
 ax.set_xlim(min(all_x), max(all_x))
 ax.set_ylim(min(all_y), max(all_y))
 
+delim=[(0,500),(500,1000),(1000,1500),(1500,2000),(2000,2500),(2500,3000),(3000,3500),(3500,4000)]
+colors=['blue','red']*4
+
+delim=[(0,4000),(4000,8000)]
+colors=['blue','red']
+
 # Создаем объект scatter с пустыми данными
 transform = DataSizeTransform(ax, size=0.01)
 print(transform.transform(None))
-scatters = [ax.scatter([], [], s=float(transform.transform(None)), c='blue', alpha=0.7)]
+scatters = [ax.scatter([], [], s=float(transform.transform(None)), c=colors[i], alpha=0.7) for i in range(len(colors))]
 time_text = ax.text(0.02, 0.95, '', transform=ax.transAxes, fontsize=12)
-
-delim=[(0,4000)]
 
 def init():
     """Инициализация анимации"""
@@ -114,4 +118,4 @@ plt.tight_layout()
 plt.show()
 
 # Для сохранения анимации в файл (раскомментируйте при необходимости)
-ani.save('particle_motion.gif', writer='pillow', fps=5)
+#sani.save('particle_motion.gif', writer='pillow', fps=5)

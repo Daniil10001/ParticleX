@@ -2,3 +2,4 @@ build/
 .vscode/
 test/*.txt
 test/*.gif
+test/gr
