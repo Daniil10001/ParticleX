@@ -6,7 +6,7 @@
 #include <utility>
 #include <algorithm>
 #include <thread>
-#include <exception>
+
 
 // for n-d
 
@@ -163,7 +163,7 @@ public:
                 ptcls[i] = Particle<dim>(pms[tp].mu/Na, pms[tp].radius, crd, v);
                 for (u d = 0; d < dim; d++)
                     ptclPerDimSrt[d][i] = &ptcls[i];
-                std::cout << crd << " " << v << '\n';
+                //std::cout << crd << " " << v << '\n';
                 i++;
             }
         }

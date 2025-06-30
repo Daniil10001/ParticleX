@@ -58,12 +58,12 @@ class SLE
         for (u i = dim-1; i >= 0; i--)
         {
             if (i>0)
-            for (u j=i-1;j>=0;j--)
-            {
-                b[j]-=(b[i]/(A[i][i]))*A[j][i];
-                A[j]-=(A[i]/(A[i][i]))*A[j][i];
-                if (j==0) break;
-            }
+                for (u j=i-1;j>=0;j--)
+                {
+                    b[j]-=(b[i]/(A[i][i]))*A[j][i];
+                    A[j]-=(A[i]/(A[i][i]))*A[j][i];
+                    if (j==0) break;
+                }
             if (i==0) break;
         }
         /*for (u i=0;i<dim;i++)

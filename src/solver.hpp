@@ -3,7 +3,7 @@
 
 #include"standarts.hpp"
 #include"domain.hpp"
-
+#include<iostream>
 #define NPROC 4
 
 template<u dim, u crd>

@@ -5,7 +5,6 @@
 #include "types.hpp"
 #include<array>
 #include <cassert>
-#include <type_traits>
 
 template<u dim, typename type>
 class Vector
