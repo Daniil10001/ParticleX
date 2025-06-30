@@ -146,7 +146,7 @@ typedef decltype(Velocity()*Mass()) Momentum;
 // Константы
 static const DimQ<0,0,0,0,-1> Na(6.02e23L);
 static const DimQ<0,0,0,0,-1> fNa(1);
-static const decltype(Energy()/Temperature()) k(1.38e-23l);
+static const decltype(Energy()/Temperature()) k(1.38e-23L);
 static const auto R=Na*k;
 
 

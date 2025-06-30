@@ -21,7 +21,7 @@ public:
     Border(const std::array<Vector<dim,Length>, dim-1>& _base, const Vector<dim,Length>& _start, Temperature T):base(_base), start(_start)
     {
         bounceS=std::function<void(Border<dim> &b, Particle<dim> &p)>([T](Border<dim>&, Particle<dim> &p){
-            p.velocity=(p.velocity/((p.velocity*p.velocity).sqrt()))*(Coefficient(1.5l)*k*T/p.m).sqrt();
+            p.velocity=(p.velocity/((p.velocity*p.velocity).sqrt()))*(Coefficient(dim) * T* (k / p.m)).sqrt();
         });
     }
 
@@ -38,7 +38,7 @@ public:
     void setTemp(Temperature T)
     {
         bounceS=std::function<void(Border<dim> &b, Particle<dim> &p)>([T](Border<dim> &b, Particle<dim> &p){
-            p.velocity=(p.velocity/((p.velocity*p.velocity).sqrt()))*(Coefficient(1.5l)*k*T/p.m).sqrt();
+            p.velocity=(p.velocity/((p.velocity*p.velocity).sqrt()))*(Coefficient(dim) * T* (k / p.m)).sqrt();
         });
     }
 

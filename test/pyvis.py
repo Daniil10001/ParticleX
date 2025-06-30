@@ -51,7 +51,7 @@ def parse_file(filename):
     return data
 
 # Считываем данные из файла
-parsed_data = parse_file('res.txt')
+parsed_data = parse_file('./gr/fifth.txt')
 
 # Создаем фигуру и оси
 fig, ax = plt.subplots(figsize=(10, 8))
@@ -68,11 +68,15 @@ all_y = [coord[1] for time, points in parsed_data for (coord), _ in points]
 ax.set_xlim(min(all_x), max(all_x))
 ax.set_ylim(min(all_y), max(all_y))
 
-delim=[(0,500),(500,1000),(1000,1500),(1500,2000),(2000,2500),(2500,3000),(3000,3500),(3500,4000)]
-colors=['blue','red']*4
+#ax.set_xlim(1, 2)
+#ax.set_ylim(1, 2)
 
-delim=[(0,4000),(4000,8000)]
-colors=['blue','red']
+delim=[(0,500),(500,1000),(1000,1500),(1500,2000),(2000,2500),(2500,3000),(3000,3500),(3500,4000)\
+    ,(4000,4500),(4500,5000),(5000,5500),(5500,6000),(6000,6500),(6500,7000),(7000,7500),(7500,8000)]
+colors=['blue','red']*8
+
+#delim=[(0,2000),(2000,4000)]
+#colors=['blue','red']
 
 # Создаем объект scatter с пустыми данными
 transform = DataSizeTransform(ax, size=0.01)
@@ -118,4 +122,4 @@ plt.tight_layout()
 plt.show()
 
 # Для сохранения анимации в файл (раскомментируйте при необходимости)
-#sani.save('particle_motion.gif', writer='pillow', fps=5)
+ani.save('./gr/fifthp.mp4', writer='ffmpeg', fps=10)

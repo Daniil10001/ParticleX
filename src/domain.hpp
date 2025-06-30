@@ -89,7 +89,7 @@ public:
             th.join();
     }
 
-    void addParticlesS(MolarMass mu, Temperature T, Length radius, ul N)
+    /*void addParticlesS(MolarMass mu, Temperature T, Length radius, ul N)
     {
         if (State == 1)
             throw std::runtime_error("You can add particles only one time!");
@@ -116,14 +116,14 @@ public:
                 v[np + 1] = v[np] * Coefficient(cosl(fi));
                 v[np] = v[np] * Coefficient(sinl(fi));
             }
-            ptcls[i] = Particle<dim>(mu/fNa, radius, crd, v);
+            ptcls[i] = Particle<dim>(mu/Na, radius, crd, v);
             for (u d = 0; d < dim; d++)
                 ptclPerDimSrt[d][i] = &ptcls[i];
             std::cout << crd << " " << v << '\n';
         }
     }
 
-    void addParticlesS(const PtclParametr &p) { addParticlesS(p.mu, p.T, p.radius, p.N); }
+    void addParticlesS(const PtclParametr &p) { addParticlesS(p.mu, p.T, p.radius, p.N); }*/
 
     template <u Np>
     void addParticlesM(const std::array<PtclParametr, Np> pms)
@@ -149,7 +149,7 @@ public:
                 Vector<dim, Length> crd = Vector<dim, Length>(start) + lns * Coefficient(0.01);
                 for (ul n = i; n > 0; n /= Nc)
                 {
-                    crd[c] += lns[c] * Coefficient((0.8L * (n % Nc)) / Nc);
+                    crd[c] += lns[c] * Coefficient((0.98L * (n % Nc)) / Nc);
                     c++;
                 }
                 Vector<dim, Velocity> v;
@@ -160,7 +160,7 @@ public:
                     v[np + 1] = v[np] * Coefficient(cosl(fi));
                     v[np] = v[np] * Coefficient(sinl(fi));
                 }
-                ptcls[i] = Particle<dim>(pms[tp].mu/fNa, pms[tp].radius, crd, v);
+                ptcls[i] = Particle<dim>(pms[tp].mu/Na, pms[tp].radius, crd, v);
                 for (u d = 0; d < dim; d++)
                     ptclPerDimSrt[d][i] = &ptcls[i];
                 std::cout << crd << " " << v << '\n';

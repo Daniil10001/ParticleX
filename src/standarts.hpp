@@ -7,7 +7,7 @@
 #define ll long long
 #define ul unsigned long
 #define u unsigned
-#define ld double
+#define ld long double
 
 const ld PI = 3.1415926535897932385L;
 
